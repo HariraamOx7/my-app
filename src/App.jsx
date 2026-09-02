@@ -1,123 +1,134 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+import { useState } from "react";
+
+export default function App() {
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
+  const [result, setResult] = useState(null);
+
+  const calculateBMI = (e) => {
+    e.preventDefault();
+
+    const weightKg = Number(weight);
+    const heightM = Number(height) / 100;
+
+    if (weightKg <= 0 || heightM <= 0) {
+      setResult({ error: "Please enter valid weight and height." });
+      return;
+    }
+
+    const bmi = weightKg / (heightM * heightM);
+
+    let category = "";
+    if (bmi < 18.5) category = "Underweight";
+    else if (bmi < 25) category = "Normal weight";
+    else if (bmi < 30) category = "Overweight";
+    else category = "Obesity";
+
+    setResult({ bmi: bmi.toFixed(1), category });
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <h1>Modified</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
+    <main style={styles.page}>
+      <section style={styles.card}>
+        <h1>BMI Calculator</h1>
+
+        <form onSubmit={calculateBMI} style={styles.form}>
+          <label>
+            Weight (kg)
+            <input
+              type="number"
+              min="1"
+              step="0.1"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              placeholder="e.g. 70"
+              required
+              style={styles.input}
+            />
+          </label>
+
+          <label>
+            Height (cm)
+            <input
+              type="number"
+              min="1"
+              step="0.1"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              placeholder="e.g. 175"
+              required
+              style={styles.input}
+            />
+          </label>
+
+          <button type="submit" style={styles.button}>
+            Calculate BMI
+          </button>
+        </form>
+
+        {result && (
+          <div style={styles.result}>
+            {result.error ? (
+              <p>{result.error}</p>
+            ) : (
+              <>
+                <h2>Your BMI: {result.bmi}</h2>
+                <p>Category: {result.category}</p>
+              </>
+            )}
+          </div>
+        )}
       </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    </main>
+  );
 }
 
-export default App
+const styles = {
+  page: {
+    minHeight: "100vh",
+    display: "grid",
+    placeItems: "center",
+    background: "#f2f6ff",
+    fontFamily: "Arial, sans-serif",
+  },
+  card: {
+    width: "min(400px, 90%)",
+    padding: "32px",
+    borderRadius: "16px",
+    background: "#ffffff",
+    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.12)",
+    textAlign: "center",
+  },
+  form: {
+    display: "grid",
+    gap: "16px",
+    textAlign: "left",
+  },
+  input: {
+    display: "block",
+    width: "100%",
+    boxSizing: "border-box",
+    marginTop: "7px",
+    padding: "12px",
+    border: "1px solid #cbd5e1",
+    borderRadius: "8px",
+    fontSize: "16px",
+  },
+  button: {
+    padding: "12px",
+    border: "none",
+    borderRadius: "8px",
+    background: "#2563eb",
+    color: "#fff",
+    fontSize: "16px",
+    fontWeight: "bold",
+    cursor: "pointer",
+  },
+  result: {
+    marginTop: "24px",
+    padding: "16px",
+    borderRadius: "10px",
+    background: "#eff6ff",
+  },
+};
